@@ -54,6 +54,7 @@
         {{ 'products.product.sold_out' | t }}
       </div>
     {% endif %}
+    <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
   </div>
 
   {% if product.compare_at_price > product.price %}
