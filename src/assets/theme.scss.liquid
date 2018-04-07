@@ -116,6 +116,10 @@
   @include prefix(align-items, $value, webkit moz ms o spec);
 }
 
+@mixin align-content($value: stretch) {
+  @include prefix(align-content, $value, webkit moz ms spec);
+}
+
 @mixin flex($value) {
   @include prefix(flex, $value, webkit moz ms spec);
 }
@@ -232,6 +236,10 @@ $color-btn-secondary: {{ settings.color_footer_bg }};
 $color-btn-secondary-hover: adaptive-color($color-btn-secondary, 5%);
 $color-btn-secondary-active: adaptive-color($color-btn-secondary-hover, 10%);
 $color-btn-secondary-text: color-control($color-btn-secondary);
+
+$color-btn-secondary-accent: {{ settings.color_button_bg }};
+$color-btn-secondary-accent-hover: adaptive-color($color-btn-secondary-accent, 10%);
+$color-btn-secondary-accent-active: adaptive-color($color-btn-secondary-accent-hover, 10%);
 
 // Accent color (nav and links)
 $color-accent: {{ settings.color_button_bg }};
@@ -1222,6 +1230,36 @@ ol {
   }
 }
 
+.btn--secondary-accent {
+  border: 1px solid $color-btn-secondary-accent;
+  color: $color-btn-secondary-accent;
+  background-color: $color-content;
+
+  &:hover {
+    border: 1px solid $color-btn-secondary-accent-hover;
+    color: $color-btn-secondary-accent-hover;
+    background-color: $color-content;
+  }
+
+  &:active,
+  &:focus {
+    border: 1px solid $color-btn-secondary-accent-active;
+    color: $color-btn-secondary-accent-active;
+    background-color: $color-content;
+  }
+
+  &[disabled] {
+    border-color: $color-disabled;
+
+    &:hover,
+    &:active,
+    &:focus {
+      background-color: $color-disabled;
+      color: $color-disabled-border;
+    }
+  }
+}
+
 /*================ Force an input/button to look like a text link ================*/
 .text-link {
   display: inline;
@@ -1894,10 +1932,9 @@ label {
 
 /*================ Primary color inline background ================*/
 .emphasized-title {
-  position: relative;
   display: inline;
   font-size: em(36);
-  line-height: 1;
+  line-height: 1.35;
   padding: 0 ($gutter-site / 2);
   background-color: $color-emphasized-title-bg;
   color: $color-emphasized-title-text;
@@ -2163,6 +2200,13 @@ a,
 
 .text-link {
   transition: $button-transition;
+
+  .icon {
+    fill: currentColor;
+    height: em($font-size-base);
+    width: em($font-size-base);
+    margin-left: 3px;
+  }
 }
 
 .link-body-color {
@@ -3122,13 +3166,9 @@ $slick-opacity-not-active: 0.25;
 
 /*================ Meganav elements ================*/
 .meganav__nav {
+  margin: 0 auto;
   position: relative;
   list-style: none;
-  margin: 0;
-}
-
-.meganav__nav--collection {
-  margin: 0 auto;
 }
 
 .meganav__nav--third-level {
@@ -3141,6 +3181,23 @@ $slick-opacity-not-active: 0.25;
 
 .meganav__list--third-level {
   background-color: $color-body;
+}
+
+.meganav__list--offset {
+  &:before {
+    content: "\00a0";
+    font-size: em(24);
+    visibility: hidden;
+  }
+}
+
+.meganav__list--gutter {
+  padding-left: $gutter-site;
+  padding-right: $gutter-site;
+}
+
+.meganav__list--multiple-columns {
+  position: relative;
 }
 
 .meganav__title {
@@ -3193,9 +3250,10 @@ $slick-opacity-not-active: 0.25;
 .site-nav__dropdown-container {
   padding: 0 $gutter-site;
   min-width: 200px;
+  white-space: normal;
 
-  .meganav__nav--collection & {
-    padding: 0 0 0 $gutter-site;
+  .meganav__nav & {
+    padding: 0 $gutter-site 0 $gutter-site;
     margin-left: -$gutter-site;
   }
 
@@ -3206,6 +3264,7 @@ $slick-opacity-not-active: 0.25;
 
 .site-nav__dropdown--third-level {
   @include display-flexbox;
+  @include flex-direction(column);
   opacity: 0;
   visibility: hidden;
   background-color: $color-body;
@@ -3215,6 +3274,10 @@ $slick-opacity-not-active: 0.25;
   left: 100%;
   transition: $meganav-site-header-transition-open;
 
+  .meganav__list & {
+    margin-left: -($gutter-site);
+  }
+
   &.meganav--active {
     visibility: visible;
     opacity: 1;
@@ -3222,42 +3285,46 @@ $slick-opacity-not-active: 0.25;
 
   .meganav__nav .meganav__list--multiple-columns & {
     left: 20%;
-    width: 20%;
-    padding-top: 70px;
+    width: 80%;
     height: 100%;
     overflow: hidden;
 
-    .meganav__nav {
+    .meganav__list {
       @include display-flexbox;
       @include flex-direction(column);
       @include flex-wrap(wrap);
-
-      li {
-        width: 100%;
-        padding: 0 $gutter-site;
-      }
-    }
-
-    .meganav__nav.page-width & {
-      margin-left: 5px;
+      @include align-items(flex-start);
+      @include align-content(flex-start);
+      max-height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
 
     .meganav__link--third-level {
+      display: inline-block;
       white-space: normal;
     }
   }
 
   .meganav__list:nth-child(2) & {
     left: 40%;
+    width: 60%;
   }
 
   .meganav__list:nth-child(3) & {
     left: 60%;
+    width: 40%;
   }
 
-  .meganav__list:nth-child(4) &,
-  .meganav__list:nth-child(5) & {
+  .meganav__list:nth-child(4) & {
     left: 80%;
+    width: 20%;
+  }
+
+  .meganav__list:nth-child(5) & {
+    left: auto;
+    right: calc(20% + #{$gutter-site});
+    text-align: right; // reverse block
   }
 }
 
@@ -3322,6 +3389,7 @@ $slick-opacity-not-active: 0.25;
 .drawer__nav .meganav__scroller--has-list {
   padding-left: $gutter-site;
 }
+
 
 /*================ Site footer ================*/
 html {
@@ -3686,6 +3754,11 @@ html {
   input[type="text"] {
     min-height: 48px;
   }
+
+  &.product-form--featured-product {
+    margin-top: 30px;
+    text-align: left;
+  }
 }
 
 .product-form__variants {
@@ -3711,6 +3784,19 @@ html {
 
 .product-form__item--submit {
   @include flex-basis(200px);
+  display: flex;
+  @include flex-direction(column);
+  margin-top: 0px;
+
+  .product-form--payment-button & {
+    margin-top: 10px;
+    @include flex-basis(100%);
+  }
+
+  &.product-form__onboarding {
+    margin-top: 20px;
+    padding-left: 0;
+  }
 }
 
 .product-form__input {
@@ -3727,7 +3813,48 @@ html {
   padding-left: 5px;
   padding-right: 5px;
   white-space: normal;
+  border-radius: 3px;
+  @include flex(1);
 }
+
+.shopify-payment-button {
+  @include flex(1);
+  .shopify-payment-button__button {
+    margin-top: 10px;
+    border-radius: 3px;
+  }
+
+  .shopify-payment-button__button--branded {
+    overflow: hidden;
+    min-height: 48px;
+  }
+
+  .shopify-payment-button__button--unbranded {
+    @extend .btn;
+    width: 100%;
+    margin-bottom: 10px;
+
+    &:hover {
+      background-color: $color-btn-secondary-accent-hover !important;
+    }
+  }
+
+  .shopify-payment-button__more-options {
+    margin: 16px 0 10px 0;
+    font-size: em($font-size-base - 2px);
+    color: $color-btn-secondary-accent;
+    text-decoration: underline;
+
+    &:hover {
+      color: $color-btn-secondary-accent-hover;
+    }
+  }
+
+  .product-form--payment-button & {
+    margin-bottom: 10px;
+  }
+}
+
 
 /*================ Product image and thumbnail layout ================*/
 .photos__item--main {
@@ -4197,7 +4324,7 @@ html {
 .hero__title {
   display: inline;
   font-size: em(36);
-  line-height: 1;
+  line-height: 1.35;
   margin: 0;
   padding: 0 ($gutter-site / 2);
   background-color: $color-hero-title-bg;
@@ -4485,8 +4612,11 @@ html {
 }
 
 .drawer__nav-link {
-  @include accent-text();
   display: block;
+}
+
+.drawer__nav-link--top-level {
+  @include accent-text();
   padding: ($gutter-site / 1.5) $gutter-site;
   font-size: $drawer-link-size;
   color: $color-drawer-text;
@@ -4498,30 +4628,18 @@ html {
   }
 }
 
-/*================ Sublist expand/collapse trigger ================*/
-.drawer__nav-has-sublist {
-  display: table;
-  width: 100%;
-
-  .drawer__nav-link {
-    display: table-cell;
-    vertical-align: middle;
-    width: 100%;
-  }
+.drawer__nav-link--split {
+  @include flex(1 0 0);
+  padding-right: 0;  // remove excess padding when there is a button
 }
 
-.drawer__nav-toggle {
-  position: relative;
-  display: table-cell;
-  vertical-align: middle;
-  width: 1%;
+/*================ Sublist expand/collapse trigger ================*/
+.drawer__nav-has-sublist {
+  @include display-flexbox();
+  @include flex-direction(row);
 }
 
 .drawer__nav-toggle-btn {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
   padding: ($gutter-site / 2 ) $gutter-site;
   color: $color-drawer-text;
   line-height: 1;
@@ -4675,7 +4793,7 @@ html {
   padding: 2px ($gutter-site / 2);
   letter-spacing: 0;
   font-size: em(26);
-  line-height: 1.2;
+  line-height: 1.4;
   @include prefix(box-decoration-break, clone, webkit o spec);
 
   @include media-query($large-up) {
@@ -5495,6 +5613,7 @@ body.modal--is-active {
 .link-block__cta {
   word-break: break-word;
   z-index: 2;
+  position: relative;
 }
 
 .link-block-no-js {
@@ -5508,6 +5627,7 @@ body.modal--is-active {
   text-align: center;
   flex: 1;
 }
+
 /*================ Quote slider ================*/
 .quote-icon {
   display: block;
@@ -5577,6 +5697,8 @@ body.modal--is-active {
 
 /*================ Featured product section ================*/
 .featured-product__text {
+  margin-top: 5px;
+
   @include media-query($small) {
     text-align: center;
     position: relative;
@@ -5585,10 +5707,19 @@ body.modal--is-active {
   }
 }
 
+.featured-product__prices {
+  margin-top: 10px;
+}
 .featured-product__image {
   @include media-query($small) {
     text-align: center;
   }
+}
+
+.featured-product__full-details {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 0 5px;
 }
 
 /*================ Featured articles ================*/

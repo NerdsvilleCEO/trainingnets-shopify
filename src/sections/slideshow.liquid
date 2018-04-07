@@ -52,16 +52,19 @@
                       </h1>
                     </div>
                   {% endunless %}
-                  <div class="hero__arrows small--hide" aria-controls="Hero">
-                    <a href="#" class="hero__arrow hero__arrow--prev">
-                      {% include 'icon-arrow-left' %}
-                      <span class="icon__fallback-text">{{ 'homepage.hero.previous_slide' | t }}</span>
-                    </a>
-                    <a href="#" class="hero__arrow hero__arrow--next">
-                      {% include 'icon-arrow-right' %}
-                      <span class="icon__fallback-text">{{ 'homepage.hero.next_slide' | t }}</span>
-                    </a>
-                  </div>
+
+                  {% if section.blocks.size > 1 %}
+                    <div class="hero__arrows small--hide" aria-controls="Hero">
+                      <a href="#" class="hero__arrow hero__arrow--prev">
+                        {% include 'icon-arrow-left' %}
+                        <span class="icon__fallback-text">{{ 'homepage.hero.previous_slide' | t }}</span>
+                      </a>
+                      <a href="#" class="hero__arrow hero__arrow--next">
+                        {% include 'icon-arrow-right' %}
+                        <span class="icon__fallback-text">{{ 'homepage.hero.next_slide' | t }}</span>
+                      </a>
+                    </div>
+                  {% endif %}
 
                   {% unless block.settings.subheading == blank %}
                     {% if block.settings.link != blank %}

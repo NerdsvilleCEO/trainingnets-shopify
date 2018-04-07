@@ -276,6 +276,7 @@
       "from_text_html": "{{ price }}から",
       "quantity": "個数",
       "add_to_cart": "カートに追加する",
+      "full_details": "詳細",
       "view": "見る",
       "stock_available": {
         "one": "残り{{ count }}個",

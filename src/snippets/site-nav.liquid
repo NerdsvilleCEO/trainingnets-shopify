@@ -46,8 +46,8 @@
 
 {% assign number_of_product_columns = max_columns | minus: number_of_link_columns %}
 
-<div class="grid grid--no-gutters meganav__scroller--has-list{% if number_of_link_columns > 1 %} meganav__list--multiple-columns{% endif %}">
-  <div class="grid__item meganav__list one-fifth{% if display_title %} meganav__list--has-title{% endif %}">
+<div class="grid grid--no-gutters meganav__scroller--has-list{% if number_of_link_columns > 1 or is_collection %} meganav__list--multiple-columns{% endif %}">
+  <div class="grid__item meganav__list one-fifth">
 
     {% if display_title %}
       <h5 class="h1 meganav__title{% unless is_collection %} page-width{% endunless %}">{{ link.title }}</h5>
@@ -100,10 +100,13 @@
             {% include 'icon-arrow-right' %}
           </a>
 
-          <div class="site-nav__dropdown site-nav__dropdown--third-level meganav__list{% if link.links.size > childlink.links.size %} site-nav__dropdown--full-height{% endif %}" id="SiteNavLinklist-{{ grandchild_list_handle }}" aria-labelledby="SiteNavLabel-{{ grandchild_list_handle }}">
-            <ul class="meganav__nav{% unless is_collection %} page-width{% endunless %}">
+          <div class="site-nav__dropdown site-nav__dropdown--third-level {% if link.links.size > childlink.links.size %} site-nav__dropdown--full-height{% endif %}{% if display_title == true %} meganav__list--offset{% endif %}"
+            id="SiteNavLinklist-{{ grandchild_list_handle }}"
+            aria-labelledby="SiteNavLabel-{{ grandchild_list_handle }}">
+
+            <ul class="meganav__list meganav__list--gutter">
               {% for grandchildlink in childlink.links %}
-                <li>
+                <li class="site-nav__dropdown-container site-nav__dropdown-container--third-level">
                   <a href="{{ grandchildlink.url }}" class="meganav__link meganav__link--third-level{% if grandchildlink.active %} meganav__link--active{% endif %}"{% if grandchildlink.active %} aria-current="page"{% endif %}>
                     {{ grandchildlink.title | escape }}
                   </a>
@@ -128,7 +131,7 @@
         {% if link_index == index_where_we_need_to_break %}
           {% unless link_is_last %}
             </div>
-            <div class="grid__item meganav__list one-fifth{% if display_title %} meganav__list--has-title{% endif %}">
+            <div class="grid__item meganav__list one-fifth{% if display_title %} meganav__list--offset{% endif %}">
           {% endunless %}
         {% endif %}
       {% endfor %}

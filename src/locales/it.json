@@ -276,6 +276,7 @@
       "from_text_html": "Da {{ price }}",
       "quantity": "Quantità",
       "add_to_cart": "Aggiungi al carrello",
+      "full_details": "Dettagli completi",
       "view": "Visualizza",
       "stock_available": {
         "one": "{{ count }} disponibile",

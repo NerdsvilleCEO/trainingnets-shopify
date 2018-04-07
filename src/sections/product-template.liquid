@@ -117,8 +117,11 @@
 
         <hr>
 
-        <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-form" id="AddToCartForm">
+        {% capture "form_class" %}product-form{% if section.settings.enable_payment_button %} product-form--payment-button{% endif %}{%- endcapture %}
 
+        {% capture "form_id" %}AddToCartForm-{{ section.id }}{%- endcapture %}
+
+        {% form 'product', product, class:form_class, id:form_id %}
           {% unless product.has_only_default_variant %}
             {% for option in product.options_with_values %}
               <div class="selector-wrapper js product-form__item">
@@ -154,7 +157,7 @@
             <button type="submit"
               name="add"
               id="AddToCart-{{ section.id }}"
-              class="btn btn--full product-form__cart-submit{% unless current_variant.available %} btn--sold-out{% endunless %}"
+              class="btn btn--full product-form__cart-submit{% unless current_variant.available %} btn--sold-out{% endunless %}{% if section.settings.enable_payment_button %} btn--secondary-accent{% endif %}"
               {% unless current_variant.available %}disabled="disabled"{% endunless %}>
               <span id="AddToCartText-{{ section.id }}">
                 {% unless current_variant.available %}
@@ -164,8 +167,11 @@
                 {% endunless %}
               </span>
             </button>
+            {% if section.settings.enable_payment_button %}
+              {{ form | payment_button }}
+            {% endif %}
           </div>
-        </form>
+        {% endform %}
 
         <hr>
 
@@ -216,6 +222,13 @@
         "type": "checkbox",
         "id": "stock_enable",
         "label": "Show stock when less than 10 products available",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_payment_button",
+        "label": "Show dynamic checkout button",
+        "info": "Lets customers check out directly using a familiar payment method. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
         "default": false
       },
       {

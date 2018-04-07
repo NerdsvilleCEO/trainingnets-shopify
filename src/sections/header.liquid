@@ -21,19 +21,21 @@
         {% if link.links != blank %}
           <li class="drawer__nav-item">
             <div class="drawer__nav-has-sublist">
-              <a href="{{ link.url }}" class="drawer__nav-link" id="DrawerLabel-{{ child_list_handle }}"{% if link.active %} aria-current="page"{% endif %}>
+              <a href="{{ link.url }}" 
+                class="drawer__nav-link drawer__nav-link--top-level drawer__nav-link--split" 
+                id="DrawerLabel-{{ child_list_handle }}"
+                {% if link.active %} aria-current="page"{% endif %}
+              >
                 {{ link.title }}
               </a>
-              <div class="drawer__nav-toggle">
-                <button type="button" aria-controls="DrawerLinklist-{{ child_list_handle }}" class="text-link drawer__nav-toggle-btn drawer__meganav-toggle" aria-label="{{ link.title }} {{ 'general.drawers.menu' | t }}" aria-expanded="false">
-                  <span class="drawer__nav-toggle--open">
-                    {% include 'icon-plus' %}
-                  </span>
-                  <span class="drawer__nav-toggle--close">
-                    {% include 'icon-minus' %}
-                  </span>
-                </button>
-              </div>
+              <button type="button" aria-controls="DrawerLinklist-{{ child_list_handle }}" class="text-link drawer__nav-toggle-btn drawer__meganav-toggle" aria-label="{{ link.title }} {{ 'general.drawers.menu' | t }}" aria-expanded="false">
+                <span class="drawer__nav-toggle--open">
+                  {% include 'icon-plus' %}
+                </span>
+                <span class="drawer__nav-toggle--close">
+                  {% include 'icon-minus' %}
+                </span>
+              </button>
             </div>
 
             <div class="meganav meganav--drawer" id="DrawerLinklist-{{ child_list_handle }}" aria-labelledby="DrawerLabel-{{ child_list_handle }}" role="navigation">
@@ -44,7 +46,10 @@
           </li>
         {% else %}
           <li class="drawer__nav-item">
-            <a href="{{ link.url }}" class="drawer__nav-link"{% if link.active %} aria-current="page"{% endif %}>
+            <a href="{{ link.url }}" 
+              class="drawer__nav-link drawer__nav-link--top-level"
+              {% if link.active %} aria-current="page"{% endif %}
+            >
               {{ link.title }}
             </a>
           </li>
@@ -54,18 +59,18 @@
       {% if shop.customer_accounts_enabled %}
         {% if customer %}
           <li class="drawer__nav-item">
-            <a href="/account" class="drawer__nav-link">
+            <a href="/account" class="drawer__nav-link drawer__nav-link--top-level">
               {{ 'layout.customer.account' | t }}
             </a>
           </li>
           <li class="drawer__nav-item">
-            <a href="/account/logout" class="drawer__nav-link">
+            <a href="/account/logout" class="drawer__nav-link drawer__nav-link--top-level">
               {{ 'layout.customer.log_out' | t }}
             </a>
           </li>
         {% else %}
           <li class="drawer__nav-item">
-            <a href="/account/login" class="drawer__nav-link">
+            <a href="/account/login" class="drawer__nav-link drawer__nav-link--top-level">
               {{ 'layout.customer.account' | t }}
             </a>
           </li>
@@ -179,8 +184,8 @@
                         {% include 'icon-arrow-down' %}
                       </a>
 
-                      <div class="site-nav__dropdown meganav" id="SiteNavLinklist-{{ child_list_handle }}" aria-labelledby="SiteNavLabel-{{ child_list_handle }}" role="navigation">
-                        <ul class="meganav__nav{% if is_collection %} meganav__nav--collection page-width{% endif %}">
+                      <div class="site-nav__dropdown meganav site-nav__dropdown--second-level" id="SiteNavLinklist-{{ child_list_handle }}" aria-labelledby="SiteNavLabel-{{ child_list_handle }}" role="navigation">
+                        <ul class="meganav__nav{% if is_collection %} meganav__nav--collection{% endif %} page-width">
                           {% include 'site-nav' %}
                         </ul>
                       </div>

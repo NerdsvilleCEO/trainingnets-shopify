@@ -1132,10 +1132,13 @@ window.Meganav = (function() {
       activeClass: 'meganav--active',
       drawerClass: 'meganav--drawer',
       meganavDropdown: '.site-nav__dropdown',
+      meganavLinkClass: 'meganav__link',
       drawerToggleClass: 'drawer__nav-toggle-btn',
       drawerNavItem: '.drawer__nav-item',
       navCollectionClass: 'meganav__nav--collection',
+      secondLevelClass: 'meganav__link--second-level',
       thirdLevelClass: 'meganav__link-toggle',
+      thirdLevelContainerClass: 'site-nav__dropdown--third-level',
       noAnimationClass: 'meganav--no-animation'
     };
 
@@ -1354,9 +1357,27 @@ window.Meganav = (function() {
     this.cache.$page.on('click.meganav', $.proxy(this.close, this));
 
     // Exception to above: clicking anywhere on the meganav will NOT close it
-    this.config.$meganavs.on('click.meganav', function(evt) {
-      evt.stopImmediatePropagation();
-    });
+    this.config.$meganavs.on(
+      'click.meganav',
+      function(evt) {
+        // 3rd level container
+        var is3rdLevelMenuTarget =
+          $(evt.currentTarget).hasClass(this.config.activeClass) &&
+          $(evt.currentTarget).hasClass(this.config.thirdLevelContainerClass);
+
+        // 2nd level mega link
+        var isMegaNavlink =
+          $(evt.target).hasClass(this.config.meganavLinkClass) &&
+          $(evt.target).hasClass(this.config.secondLevelClass);
+
+        // If we click anything outside from the 3rd level megaNav, close the third level menu (except for 2nd level links)
+        if (!is3rdLevelMenuTarget && !isMegaNavlink) {
+          this.removeMenuActiveState();
+        }
+
+        evt.stopImmediatePropagation();
+      }.bind(this)
+    );
 
     // Pressing escape closes meganav and focuses the target parent link
     this.cache.$document.on(
@@ -2577,7 +2598,8 @@ theme.Product = (function() {
       productThumbs: '#ProductThumbs-' + sectionId,
       saleTag: '#ProductSaleTag-' + sectionId,
       productStock: '#ProductStock-' + sectionId,
-      singleOptionSelector: '.single-option-selector-' + sectionId
+      singleOptionSelector: '.single-option-selector-' + sectionId,
+      shopifyPaymentButton: '.shopify-payment-button'
     };
 
     this.settings = $.extend({}, defaults, {
@@ -2614,7 +2636,9 @@ theme.Product = (function() {
       this._initQtySelector();
 
       if (this.settings.ajaxCart) {
-        theme.AjaxCart = new window.AjaxCart($('#AddToCartForm'));
+        theme.AjaxCart = new window.AjaxCart(
+          $('#AddToCartForm-' + this.settings.sectionId)
+        );
       }
 
       // Pre-loading product images to avoid a lag when a thumbnail is clicked, or
@@ -2689,6 +2713,7 @@ theme.Product = (function() {
           // We have a valid product variant, so enable the submit button
           cache.$addToCart.removeClass('btn--sold-out').prop('disabled', false);
           cache.$addToCartText.html(theme.strings.addToCart);
+          $(this.selectors.shopifyPaymentButton, this.$container).show();
           // Show how many items are left, if below 10
           if (this.settings.stockSetting) {
             if (variant.inventory_management) {
@@ -2724,6 +2749,7 @@ theme.Product = (function() {
           // Variant is sold out, disable the submit button
           cache.$addToCart.prop('disabled', true).addClass('btn--sold-out');
           cache.$addToCartText.html(theme.strings.soldOut);
+          $(this.selectors.shopifyPaymentButton, this.$container).hide();
           if (this.settings.stockSetting) {
             if (variant.incoming) {
               cache.$stock
@@ -2742,6 +2768,7 @@ theme.Product = (function() {
       } else {
         cache.$addToCart.prop('disabled', true).removeClass('btn--sold-out');
         cache.$addToCartText.html(theme.strings.unavailable);
+        $(this.selectors.shopifyPaymentButton, this.$container).hide();
         if (this.settings.stockSetting) {
           cache.$stock.addClass('hide');
         }
@@ -3566,6 +3593,7 @@ theme.init = function() {
   var sections = new theme.Sections();
   sections.register('header', theme.HeaderSection);
   sections.register('product', theme.Product);
+  sections.register('featured-product', theme.Product);
   sections.register('collection-filters', theme.Filters);
   sections.register('map', theme.Maps);
   sections.register('slideshow', theme.Slideshow);
